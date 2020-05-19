@@ -2,6 +2,8 @@
 #app
   img(src='./assets/logo.png')
   h1 FranLopMusic
+  select(v-model="selectedCountry")
+    option(v-for="country in countries" :value="country.value") {{ country.name }}
   ul
     artist(v-for="artist in artists" v-bind:artist="artist" v-bind:key="artist.mbid")
 </template>
@@ -15,18 +17,34 @@ export default {
   name: 'app',
   data () {
     return {
-      artists: []
+      artists: [],
+      countries:[
+        { name: 'Mexico', value: 'mexico' },
+        { name: 'Spain', value: 'spain' },
+        { name: 'Colombia', value: 'colombia' }
+      ],
+      selectedCountry: 'mexico'
     }
   },
   components: {
     Artist
   },
-  mounted: function(){
+  methods: {
+    refreshArtists(){
     const self = this
-    getArtist()
+    getArtist(this.selectedCountry)
       .then(function(artists) {
         self.artists = artists
-      })
+      })  
+    }
+  },
+  mounted (){
+    this.refreshArtists()
+  },
+  watch: {
+    selectedCountry(){
+      this.refreshArtists()
+    }
   }
 }
 </script>
